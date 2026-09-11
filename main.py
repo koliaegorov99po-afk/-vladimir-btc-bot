@@ -7,8 +7,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
-# Токен и ID оператора
-TOKEN = "8820422773:AAEfv_WkjdDcKlf0YUwxoRDYDZ-7xiHOwp0"
+# Новый токен и ID оператора
+TOKEN = "8616697712:AAHeF6EDbZYld2l-St6qxSpGQTu7-zSNNHY"
 OPERATOR_ID = 8974638307
 
 logging.basicConfig(level=logging.INFO)
