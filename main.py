@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -12,6 +13,7 @@ from aiogram.types import (
     Message,
 )
 import aiohttp
+from aiohttp import web
 
 # Токен и ID оператора
 TOKEN = "8616697712:AAHeF6EDbZYld2l-St6qxSpGQTu7-zSNNHY"
@@ -507,13 +509,32 @@ async def operator_action(callback: CallbackQuery):
     await callback.answer("Произошла ошибка при обработке действия.")
 
 
+# --- Веб-сервер для поддержки активности на Render ---
+async def handle(request):
+  return web.Response(text="Bot is alive and running!")
+
+
+async def start_web_server():
+  app = web.Application()
+  app.router.add_get("/", handle)
+  runner = web.AppRunner(app)
+  await runner.setup()
+  port = int(os.environ.get("PORT", 10000))
+  site = web.TCPSite(runner, "0.0.0.0", port)
+  await site.start()
+  logging.info(f"Веб-сервер запущен на порту {port}")
+
+
 async def main():
   bot = Bot(token=TOKEN)
   dp = Dispatcher(storage=MemoryStorage())
   dp.include_router(router)
   await bot.delete_webhook(drop_pending_updates=True)
-  print("Бот запущен и готов к работе!")
-  await dp.start_polling(bot)
+
+  print("Бот и веб-сервер запущены!")
+
+  # Одновременный запуск веб-сервера и опроса Telegram
+  await asyncio.gather(start_web_server(), dp.start_polling(bot))
 
 
 if __name__ == "__main__":
