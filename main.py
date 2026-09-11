@@ -79,7 +79,7 @@ async def cmd_start(message: Message, state: FSMContext):
   )
 
   welcome_text = (
-      "👋 **Добро пожаловать в официальный обменный сервис @VLADIMIR_BTC_MD!**\n\n"
+      "👋 <b>Добро пожаловать в официальный обменный сервис @VLADIMIR_BTC_MD!</b>\n\n"
       "⚡️ Быстрый, безопасный и надежный обмен фиатных средств и"
       " криптовалюты.\n"
       "💼 Работаем с рублями РФ, ПМР и молдавскими леями.\n\n"
@@ -91,10 +91,10 @@ async def cmd_start(message: Message, state: FSMContext):
         photo=WELCOME_PHOTO_URL,
         caption=welcome_text,
         reply_markup=kb,
-        parse_mode="Markdown",
+        parse_mode="HTML",
     )
   except Exception:
-    await message.answer(welcome_text, reply_markup=kb, parse_mode="Markdown")
+    await message.answer(welcome_text, reply_markup=kb, parse_mode="HTML")
 
 
 @router.callback_query(F.data == "dir_buy")
@@ -135,9 +135,9 @@ async def process_buy_menu(callback: CallbackQuery, state: FSMContext):
       ]
   )
   await callback.message.answer(
-      "🟢 **Покупка криптовалюты**\nВыберите актив, который хотите купить:",
+      "🟢 <b>Покупка криптовалюты</b>\nВыберите актив, который хотите купить:",
       reply_markup=kb,
-      parse_mode="Markdown",
+      parse_mode="HTML",
   )
   await callback.answer()
 
@@ -180,9 +180,10 @@ async def process_buy_currency(callback: CallbackQuery, state: FSMContext):
       ]
   )
   await callback.message.answer(
-      f"💳 Вы выбрали покупку **{currency}**.\nВыберите способ оплаты (фиат):",
+      f"💳 Вы выбрали покупку <b>{currency}</b>.\nВыберите способ оплаты"
+      " (фиат):",
       reply_markup=kb,
-      parse_mode="Markdown",
+      parse_mode="HTML",
   )
   await callback.answer()
 
@@ -225,9 +226,9 @@ async def process_sell_menu(callback: CallbackQuery, state: FSMContext):
       ]
   )
   await callback.message.answer(
-      "🔴 **Продажа криптовалюты**\nВыберите актив, который хотите продать:",
+      "🔴 <b>Продажа криптовалюты</b>\nВыберите актив, который хотите продать:",
       reply_markup=kb,
-      parse_mode="Markdown",
+      parse_mode="HTML",
   )
   await callback.answer()
 
@@ -238,9 +239,9 @@ async def process_sell_currency(callback: CallbackQuery, state: FSMContext):
   await state.update_data(currency=currency)
 
   await callback.message.answer(
-      f"✍️ Вы выбрали продажу **{currency}**.\nВведите сумму криптовалюты для"
-      " продажи (цифрами):",
-      parse_mode="Markdown",
+      f"✍️ Вы выбрали продажу <b>{currency}</b>.\nВведите сумму криптовалюты"
+      " для продажи (цифрами):",
+      parse_mode="HTML",
   )
   await state.set_state(ExchangeState.waiting_for_amount)
   await callback.answer()
@@ -253,7 +254,7 @@ async def process_payment_method(callback: CallbackQuery, state: FSMContext):
 
   await callback.message.answer(
       "✍️ Введите сумму в фиате, которую хотите обменять (цифрами):",
-      parse_mode="Markdown",
+      parse_mode="HTML",
   )
   await state.set_state(ExchangeState.waiting_for_amount)
   await callback.answer()
@@ -291,36 +292,38 @@ async def receive_amount(message: Message, state: FSMContext):
         usd_amount = amount / 100.0
         calc_details = f"Сумма: {amount} RUB\nКурс: 1$ = 100 RUB"
         requisites = (
-            "📌 **Реквизиты для оплаты (Рубли РФ СБП):**\n"
-            "🏦 **Банк:** Сбербанк / Т-Банк / ВТБ\n"
-            "📱 **Номер телефона / СБП:** `+79019727196`\n"
+            "📌 <b>Реквизиты для оплаты (Рубли РФ СБП):</b>\n"
+            "🏦 <b>Банк:</b> Сбербанк / Т-Банк / ВТБ\n"
+            "📱 <b>Номер телефона / СБП:</b> <code>+79019727196</code>\n"
         )
       elif "PMR" in pay_method:
         usd_amount = amount / 19.0
         calc_details = f"Сумма: {amount} ПМР руб\nКурс: 1$ = 19 ПМР"
         requisites = (
-            "📌 **Реквизиты для оплаты (ПМР):**\n"
-            "🏦 **ЭКСИМ / ПЕРЕВОДИЛКА**\n"
-            "🔢 **Счет / Номер:** `77507411`\n"
+            "📌 <b>Реквизиты для оплаты (ПМР):</b>\n"
+            "🏦 <b>ЭКСИМ / ПЕРЕВОДИЛКА</b>\n"
+            "🔢 <b>Счет / Номер:</b> <code>77507411</code>\n"
         )
       elif "MDL" in pay_method:
         usd_amount = amount / 21.0
         calc_details = f"Сумма: {amount} MDL\nКурс: 1$ = 21 MDL"
         if "PAYNET" in pay_method or "RUNPAY" in pay_method:
           requisites = (
-              "📌 **Реквизиты для оплаты (Леи МД — Paynet / RunPay / MIA):**\n"
-              "📱 **Номер:** `068728340`\n"
+              "📌 <b>Реквизиты для оплаты (Леи МД — Paynet / RunPay /"
+              " MIA):</b>\n"
+              "📱 <b>Номер:</b> <code>068728340</code>\n"
           )
         elif "MAIB" in pay_method:
           requisites = (
-              "📌 **Реквизиты для оплаты (MAIB):**\n"
-              "👤 **Получатель:** Marina Russ\n"
-              "💳 **Счет / Карта:** `4356960081341247`\n"
+              "📌 <b>Реквизиты для оплаты (MAIB):</b>\n"
+              "👤 <b>Получатель:</b> Marina Russ\n"
+              "💳 <b>Счет / Карта:</b> <code>4356960081341247</code>\n"
           )
         else:
           requisites = (
-              "📌 **Реквизиты для оплаты (Леи МД):**\n"
-              "📱 **Номер / Счет:** `068728340` или `4356960081341247` (MAIB)\n"
+              "📌 <b>Реквизиты для оплаты (Леи МД):</b>\n"
+              "📱 <b>Номер / Счет:</b> <code>068728340</code> или"
+              " <code>4356960081341247</code> (MAIB)\n"
           )
 
       crypto_amount = usd_amount / coin_price_usd if coin_price_usd > 0 else 0
@@ -329,14 +332,16 @@ async def receive_amount(message: Message, state: FSMContext):
       )
 
       text = (
-          f"🧮 **Расчет обмена:**\n{calc_details}\n"
-          f"💵 Эквивалент в USD: `${usd_amount:.2f}`\n"
-          f"🪙 Получите криптовалюту ({currency}): `{crypto_amount:.6f}`\n\n"
+          f"🧮 <b>Расчет обмена:</b>\n{calc_details}\n"
+          f"💵 Эквивалент в USD: <b>${usd_amount:.2f}</b>\n"
+          f"🪙 Получите криптовалюту ({currency}):"
+          f" <code>{crypto_amount:.6f}</code>\n\n"
           f"{requisites}\n"
-          "⚠️ **Важно:** После оплаты обязательно отправьте в чат **скриншот чека"
-          "** или **хеш транзакции** для подтверждения оператором."
+          "⚠️ <b>Важно:</b> После оплаты обязательно отправьте в чат"
+          " <b>скриншот чека</b> или <b>хеш транзакции</b> для подтверждения"
+          " оператором."
       )
-      await message.answer(text, parse_mode="Markdown")
+      await message.answer(text, parse_mode="HTML")
       await state.set_state(ExchangeState.waiting_for_receipt)
 
     else:
@@ -351,32 +356,36 @@ async def receive_amount(message: Message, state: FSMContext):
 
       crypto_wallet = ""
       if "LTC" in currency:
-        crypto_wallet = "`ltc1qkprk223v0hjc36g2dlysmtlgqdzrtp48xwvwja`"
+        crypto_wallet = "<code>ltc1qkprk223v0hjc36g2dlysmtlgqdzrtp48xwvwja</code>"
       elif "BEP20" in currency:
-        crypto_wallet = "`0x89b28d58ce3e521a920d6b8f008841c3cd3d5747`"
+        crypto_wallet = "<code>0x89b28d58ce3e521a920d6b8f008841c3cd3d5747</code>"
       elif "TRC20" in currency or "TRX" in currency:
-        crypto_wallet = "`TELVh3pvb2HKcL2fd6UQFwfBEEs7m3mi6v`"
+        crypto_wallet = "<code>TELVh3pvb2HKcL2fd6UQFwfBEEs7m3mi6v</code>"
       elif "BTC" in currency:
-        crypto_wallet = "`3AvgzeSvUh5MXz9QSuyRwBDjLDAmsp7Z8M`"
+        crypto_wallet = "<code>3AvgzeSvUh5MXz9QSuyRwBDjLDAmsp7Z8M</code>"
       elif "TON" in currency:
-        crypto_wallet = "`UQCVdkthxRGvHJV68mLfcGYuHYfL_2sWZVylZIGBVl7cZElX`"
+        crypto_wallet = (
+            "<code>UQCVdkthxRGvHJV68mLfcGYuHYfL_2sWZVylZIGBVl7cZElX</code>"
+        )
       else:
-        crypto_wallet = "`Адрес уточняйте у оператора @VLADIMIR_BTC_MD`"
+        crypto_wallet = (
+            "<code>Адрес уточняйте у оператора @VLADIMIR_BTC_MD</code>"
+        )
 
       text = (
-          f"🧮 **Расчет продажи крипты:**\n"
-          f"🪙 Сумма крипты: `{crypto_amount} {currency}`\n"
-          f"💵 Эквивалент в USD: `${usd_amount:.2f}`\n\n"
-          "💰 **Вы получите по курсу:**\n"
-          f"• Рубли РФ (72р за 1$): **{rub_rf:.2f} RUB**\n"
-          f"• Рубли ПМР (16р за 1$): **{pmr_rub:.2f} ПМР**\n"
-          f"• Леи МД (17 лей за 1$): **{mdl_lei:.2f} MDL**\n\n"
-          "📌 **Переведите криптовалюту на наш кошелек:**\n"
+          f"🧮 <b>Расчет продажи крипты:</b>\n"
+          f"🪙 Сумма крипты: <code>{crypto_amount} {currency}</code>\n"
+          f"💵 Эквивалент в USD: <b>${usd_amount:.2f}</b>\n\n"
+          "💰 <b>Вы получите по курсу:</b>\n"
+          f"• Рубли РФ (72р за 1$): <b>{rub_rf:.2f} RUB</b>\n"
+          f"• Рубли ПМР (16р за 1$): <b>{pmr_rub:.2f} ПМР</b>\n"
+          f"• Леи МД (17 лей за 1$): <b>{mdl_lei:.2f} MDL</b>\n\n"
+          "📌 <b>Переведите криптовалюту на наш кошелек:</b>\n"
           f"{crypto_wallet}\n\n"
-          "⚠️ **Важно:** После перевода отправьте **хеш транзакции** или"
-          " **скриншот** оператору через этот чат."
+          "⚠️ <b>Важно:</b> После перевода отправьте <b>хеш транзакции</b> или"
+          " <b>скриншот</b> оператору через этот чат."
       )
-      await message.answer(text, parse_mode="Markdown")
+      await message.answer(text, parse_mode="HTML")
       await state.set_state(ExchangeState.waiting_for_receipt)
 
   except Exception as e:
@@ -398,9 +407,9 @@ async def receive_receipt(message: Message, state: FSMContext):
     text_content = message.caption or message.text or "Скриншот без текста"
 
     operator_caption = (
-        f"🚨 **Новая заявка на обмен!**\n"
-        f"🆔 Номер сделки: `{deal_id}`\n"
-        f"👤 Пользователь: @{user.username} (ID: `{user.id}`)\n"
+        f"🚨 <b>Новая заявка на обмен!</b>\n"
+        f"🆔 Номер сделки: <code>{deal_id}</code>\n"
+        f"👤 Пользователь: @{user.username} (ID: <code>{user.id}</code>)\n"
         f"🔄 Направление: {data.get('direction')}\n"
         f"🪙 Валюта: {data.get('currency')}\n"
         f"💵 Сумма: {data.get('amount')}\n"
@@ -428,20 +437,20 @@ async def receive_receipt(message: Message, state: FSMContext):
           photo=photo_id,
           caption=operator_caption,
           reply_markup=kb_operator,
-          parse_mode="Markdown",
+          parse_mode="HTML",
       )
     else:
       await message.bot.send_message(
           chat_id=OPERATOR_ID,
           text=operator_caption,
           reply_markup=kb_operator,
-          parse_mode="Markdown",
+          parse_mode="HTML",
       )
 
     await message.answer(
-        f"✅ Чек/хеш успешно принят! Номер вашей сделки: `{deal_id}`.\nОператор"
+        f"✅ Чек/хеш успешно принят! Номер вашей сделки: <code>{deal_id}</code>.\nОператор"
         " (@VLADIMIR_BTC_MD) проверяет платеж, ожидайте подтверждения.",
-        parse_mode="Markdown",
+        parse_mode="HTML",
     )
     await state.clear()
   except Exception as e:
@@ -464,22 +473,22 @@ async def operator_action(callback: CallbackQuery):
       await callback.bot.send_message(
           chat_id=target_user_id,
           text=(
-              f"✅ **Ваша сделка `{deal_id}` успешно подтверждена"
-              " оператором!**\nСредства / криптовалюта успешно отправлены по"
+              f"✅ <b>Ваша сделка <code>{deal_id}</code> успешно подтверждена"
+              " оператором!</b>\nСредства / криптовалюта успешно отправлены по"
               " вашим реквизитам. Спасибо за доверие к @VLADIMIR_BTC_MD!"
           ),
-          parse_mode="Markdown",
+          parse_mode="HTML",
       )
       if callback.message.caption:
         await callback.message.edit_caption(
             caption=callback.message.caption
-            + "\n\n🟢 **СТАТУС: Подтверждено оператором**",
+            + "\n\n🟢 <b>СТАТУС: Подтверждено оператором</b>",
             reply_markup=None,
         )
       else:
         await callback.message.edit_text(
             text=callback.message.text
-            + "\n\n🟢 **СТАТУС: Подтверждено оператором**",
+            + "\n\n🟢 <b>СТАТУС: Подтверждено оператором</b>",
             reply_markup=None,
         )
       await callback.answer("Сделка подтверждена!")
@@ -487,20 +496,20 @@ async def operator_action(callback: CallbackQuery):
       await callback.bot.send_message(
           chat_id=target_user_id,
           text=(
-              f"❌ **Ваша сделка `{deal_id}` отклонена оператором.** Обратитесь в"
+              f"❌ <b>Ваша сделка <code>{deal_id}</code> отклонена оператором.</b> Обратитесь в"
               " поддержку @VLADIMIR_BTC_MD."
           ),
-          parse_mode="Markdown",
+          parse_mode="HTML",
       )
       if callback.message.caption:
         await callback.message.edit_caption(
             caption=callback.message.caption
-            + "\n\n🔴 **СТАТУС: Отклонено**",
+            + "\n\n🔴 <b>СТАТУС: Отклонено</b>",
             reply_markup=None,
         )
       else:
         await callback.message.edit_text(
-            text=callback.message.text + "\n\n🔴 **СТАТУС: Отклонено**",
+            text=callback.message.text + "\n\n🔴 <b>СТАТУС: Отклонено</b>",
             reply_markup=None,
         )
       await callback.answer("Сделка отклонена.")
